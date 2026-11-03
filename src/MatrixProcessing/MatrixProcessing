@@ -1,0 +1,296 @@
+package MatrixProcessing;
+
+import java.util.Scanner;
+
+public class MatrixProcessing {
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            printMenu();
+            if (!scanner.hasNextInt()) {
+                scanner.next();
+                continue;
+            }
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    addMatrices();
+                    break;
+                case 2:
+                    multiplyMatrixByConstant();
+                    break;
+                case 3:
+                    multiplyMatrices();
+                    break;
+                case 4:
+                    transposeMatrixMenu();
+                    break;
+                case 5:
+                    calculateDeterminantMenu();
+                    break;
+                case 6:
+                    inverseMatrixMenu();
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 0);
+    }
+
+    private static void printMenu() {
+        System.out.println("1. Add matrices");
+        System.out.println("2. Multiply matrix by a constant");
+        System.out.println("3. Multiply matrices");
+        System.out.println("4. Transpose matrix");
+        System.out.println("5. Calculate a determinant");
+        System.out.println("6. Inverse matrix");
+        System.out.println("0. Exit");
+        System.out.print("Your choice: > ");
+    }
+
+    // Считывание матрицы (поддерживает целые и вещественные числа)
+    private static double[][] readMatrix() {
+        int rows = scanner.nextInt();
+        int cols = scanner.nextInt();
+        double[][] matrix = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                matrix[i][j] = scanner.nextDouble();
+            }
+        }
+        return matrix;
+    }
+
+    // Вывод матрицы без размеров
+    private static void printMatrix(double[][] matrix) {
+        for (double[] row : matrix) {
+            for (int j = 0; j < row.length; j++) {
+                // Выводим целые числа без .0, если они таковые
+                if (row[j] == (int) row[j]) {
+                    System.out.print((int) row[j] + (j == row.length - 1 ? "" : " "));
+                } else {
+                    System.out.print(row[j] + (j == row.length - 1 ? "" : " "));
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // Этап 1: Сложение матриц
+    private static void addMatrices() {
+        System.out.print("Enter size of first matrix: > ");
+        int r1 = scanner.nextInt();
+        int c1 = scanner.nextInt();
+        System.out.println("Enter first matrix:");
+        double[][] a = new double[r1][c1];
+        for (int i = 0; i < r1; i++)
+            for (int j = 0; j < c1; j++)
+                a[i][j] = scanner.nextDouble();
+
+        System.out.print("Enter size of second matrix: > ");
+        int r2 = scanner.nextInt();
+        int c2 = scanner.nextInt();
+        System.out.println("Enter second matrix:");
+        double[][] b = new double[r2][c2];
+        for (int i = 0; i < r2; i++)
+            for (int j = 0; j < c2; j++)
+                b[i][j] = scanner.nextDouble();
+
+        if (r1 != r2 || c1 != c2) {
+            System.out.println("ERROR");
+            System.out.println("The operation cannot be performed.");
+            return;
+        }
+
+        double[][] result = new double[r1][c1];
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c1; j++) {
+                result[i][j] = a[i][j] + b[i][j];
+            }
+        }
+        System.out.println("The result is:");
+        printMatrix(result);
+    }
+    // Этап 2: Умножение матрицы на константу
+        private static void multiplyMatrixByConstant() {
+            System.out.print("Enter size of matrix: > ");
+            double[][] a = readMatrix();
+            System.out.print("Enter constant: > ");
+            double constant = scanner.nextDouble();
+
+            double[][] result = new double[a.length][a[0].length];
+            for (int i = 0; i < a.length; i++) {
+                for (int j = 0; j < a[0].length; j++) {
+                    result[i][j] = a[i][j] * constant;
+                }
+            }
+            System.out.println("The result is:");
+            printMatrix(result);
+        }
+
+        // Этап 3: Умножение матриц
+        private static void multiplyMatrices() {
+            System.out.print("Enter size of first matrix: > ");
+            int r1 = scanner.nextInt();
+            int c1 = scanner.nextInt();
+            System.out.println("Enter first matrix:");
+            double[][] a = new double[r1][c1];
+            for (int i = 0; i < r1; i++)
+                for (int j = 0; j < c1; j++)
+                    a[i][j] = scanner.nextDouble();
+
+            System.out.print("Enter size of second matrix: > ");
+            int r2 = scanner.nextInt();
+            int c2 = scanner.nextInt();
+            System.out.println("Enter second matrix:");
+            double[][] b = new double[r2][c2];
+            for (int i = 0; i < r2; i++)
+                for (int j = 0; j < c2; j++)
+                    b[i][j] = scanner.nextDouble();
+
+            if (c1 != r2) {
+                System.out.println("ERROR");
+                System.out.println("The operation cannot be performed.");
+                return;
+            }
+
+            double[][] result = new double[r1][c2];
+            for (int i = 0; i < r1; i++) {
+                for (int j = 0; j < c2; j++) {
+                    for (int k = 0; k < c1; k++) {
+                        result[i][j] += a[i][k] * b[k][j];
+                    }
+                }
+            }
+            System.out.println("The result is:");
+            printMatrix(result);
+        }
+
+        // Этап 4: Транспонирование матриц
+        private static void transposeMatrixMenu() {
+            System.out.println("1. Main diagonal");
+            System.out.println("2. Side diagonal");
+            System.out.println("3. Vertical line");
+            System.out.println("4. Horizontal line");
+            System.out.print("Your choice: > ");
+            int tChoice = scanner.nextInt();
+
+            System.out.print("Enter matrix size: > ");
+            double[][] a = readMatrix();
+            int n = a.length;
+            int m = a[0].length;
+            double[][] res = new double[n][m];
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    if (tChoice == 1) { // Главная диагональ
+                        res[j][i] = a[i][j];
+                    } else if (tChoice == 2) { // Побочная диагональ
+                        res[n - 1 - j][m - 1 - i] = a[i][j];
+                    } else if (tChoice == 3) { // Вертикальная линия
+                        res[i][m - 1 - j] = a[i][j];
+                    } else if (tChoice == 4) { // Горизонтальная линия
+                        res[n - 1 - i][j] = a[i][j];
+                    }
+                }
+            }
+            // Если транспонирование по главной диагонали, размер меняется местами
+            if (tChoice == 1) {
+                double[][] transposedRes = new double[m][n];
+                for(int i=0; i<m; i++)
+                    for(int j=0; j<n; j++)
+                        transposedRes[i][j] = res[i][j];
+                System.out.println("The result is:");
+                printMatrix(transposedRes);
+                return;
+            }
+
+            System.out.println("The result is:");
+            printMatrix(res);
+        }
+
+        // Этап 5: Вычисление определителя
+        private static void calculateDeterminantMenu() {
+            System.out.print("Enter matrix size: > ");
+            double[][] a = readMatrix();
+            if (a.length != a[0].length) {
+                System.out.println("Matrix must be square.");
+                return;
+            }
+            double det = determinant(a);
+            System.out.println("The result is:");
+            if (det == (int) det) {
+                System.out.println((int) det);
+            } else {
+                System.out.println(det);
+            }
+        }
+        private static double determinant(double[][] matrix) {
+                int n = matrix.length;
+                if (n == 1) return matrix[0][0];
+                if (n == 2) return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+                double det = 0;
+                for (int p = 0; p < n; p++) {
+                    double[][] sub = new double[n - 1][n - 1];
+                    for (int i = 1; i < n; i++) {
+                        int subJ = 0;
+                        for (int j = 0; j < n; j++) {
+                            if (j == p) continue;
+                            sub[i - 1][subJ++] = matrix[i][j];
+                        }
+                    }
+                    det += Math.pow(-1, p) * matrix[0][p] * determinant(sub);
+                }
+                return det;
+            }
+
+            // Этап 6: Обратная матрица
+            private static void inverseMatrixMenu() {
+                System.out.print("Enter matrix size: > ");
+                double[][] a = readMatrix();
+                int n = a.length;
+                if (n != a[0].length) {
+                    System.out.println("Matrix must be square.");
+                    return;
+                }
+
+                double det = determinant(a);
+                if (Math.abs(det) < 1e-9) {
+                    System.out.println("This matrix doesn't have an inverse.");
+                    return;
+                }
+
+                double[][] inv = new double[n][n];
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        double[][] sub = new double[n - 1][n - 1];
+                        int subI = 0;
+                        for (int r = 0; r < n; r++) {
+                            if (r == i) continue;
+                            int subJ = 0;
+                            for (int c = 0; c < n; c++) {
+                                if (c == j) continue;
+                                sub[subI][subJ++] = a[r][c];
+                            }
+                            subI++;
+                        }
+                        inv[j][i] = Math.pow(-1, i + j) * determinant(sub) / det; // транспонирование алгебраических дополнений
+                    }
+                }
+
+                // Форматированный вывод для обратной матрицы с округлением до 2 знаков (как в примерах)
+                System.out.println("The result is:");
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        System.out.printf(java.util.Locale.US, "%.2f%s", inv[i][j], (j == n - 1 ? "" : " "));
+                    }
+                    System.out.println();
+                }
+            }
+        }
